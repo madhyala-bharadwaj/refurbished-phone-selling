@@ -64,7 +64,7 @@ To get the project running locally, please follow these steps.
 ### Installation
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/madhyala-bharadwaj/refurbished-phone-selling/
     cd refurbished_phone_selling
     ```
 
@@ -103,4 +103,5 @@ To get the project running locally, please follow these steps.
 
 3.  **Login:**
     You will be greeted by the login page. Click the **"Login as Admin"** button to access the main dashboard. The application uses mock credentials (`admin`/`password`) handled by the backend.
+
 
