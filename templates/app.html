@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refurbished Phone Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .main-tab-content { display: none; }
+        .main-tab-content.active { display: block; }
+        .sidebar-link.active { background-color: #4f46e5; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { border-color: #4f46e5; color: #4f46e5; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
+
+    <!-- Main Application Layout -->
+    <div id="main-content" class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-800 text-white flex flex-col">
+            <div class="p-4 border-b border-slate-700">
+                <h1 class="text-2xl font-bold">PhoneDash</h1>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" data-tab="dashboard" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-md hover:bg-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" data-tab="inventory" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-md hover:bg-slate-700 active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    <span>Inventory</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <!-- Dashboard Tab Content -->
+            <div id="tab-dashboard" class="main-tab-content">
+                <h2 class="text-3xl font-bold mb-6">Analytics Overview</h2>
+                <section id="dashboard">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm"><h3 class="text-lg font-semibold text-slate-500">Total Phones</h3><p id="total-phones" class="text-4xl font-bold">0</p></div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm"><h3 class="text-lg font-semibold text-slate-500">Total Stock Units</h3><p id="total-stock-units" class="text-4xl font-bold">0</p></div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm"><h3 class="text-lg font-semibold text-slate-500">Total Inventory Value</h3><p id="total-inventory-value" class="text-4xl font-bold">$0</p></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm"><canvas id="brand-chart"></canvas></div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm"><canvas id="condition-chart"></canvas></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Inventory Tab Content -->
+            <div id="tab-inventory" class="main-tab-content active">
+                <section id="inventory">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold">Inventory Management</h2>
+                        <div class="flex items-center space-x-2">
+                            <label for="csv-upload" class="flex items-center space-x-2 bg-white text-slate-700 px-4 py-2 rounded-md hover:bg-slate-100 transition border border-slate-300 cursor-pointer text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                <span>Bulk Upload</span>
+                            </label>
+                            <input type="file" id="csv-upload" accept=".csv" class="hidden">
+                            <button id="update-prices-btn" class="flex items-center space-x-2 bg-white text-slate-700 px-4 py-2 rounded-md hover:bg-slate-100 transition border border-slate-300 text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                <span>Update Prices</span>
+                            </button>
+                            <button id="show-add-phone-modal-btn" class="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition text-sm font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                <span>Add Phone</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6 p-4 bg-white rounded-lg shadow-sm border border-slate-200">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <input type="text" id="search-brand" placeholder="Search by Brand..." class="p-2 border rounded-md border-slate-300">
+                            <select id="filter-condition" class="p-2 border rounded-md border-slate-300">
+                                <option value="">All Conditions</option>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Usable">Usable</option>
+                                <option value="Scrap">Scrap</option>
+                            </select>
+                            <select id="filter-platform" class="p-2 border rounded-md border-slate-300"><option value="">All Platforms</option><option value="X">Platform X</option><option value="Y">Platform Y</option><option value="Z">Platform Z</option></select>
+                            <button id="reset-filters-btn" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-md hover:bg-slate-300 transition font-medium">Reset Filters</button>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200">
+                            <h3 class="text-md font-medium text-slate-600">Bulk Actions for Filtered Phones</h3>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <select id="bulk-list-platform" class="p-2 border rounded-md border-slate-300 flex-1">
+                                    <option value="" disabled selected>Select Platform to List On</option>
+                                    <option value="X">Platform X</option><option value="Y">Platform Y</option><option value="Z">Platform Z</option>
+                                </select>
+                                <button id="bulk-list-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition font-medium">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm overflow-x-auto border border-slate-200">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Model</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Stock</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Base Price</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Listed On</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="phone-inventory-body" class="bg-white divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div id="pagination-controls" class="flex justify-between items-center mt-4">
+                        <span id="pagination-info" class="text-sm text-slate-600"></span>
+                        <div class="flex items-center space-x-2">
+                            <button id="prev-page-btn" class="bg-white text-slate-700 px-3 py-1 rounded-md hover:bg-slate-100 transition border border-slate-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                            <button id="next-page-btn" class="bg-white text-slate-700 px-3 py-1 rounded-md hover:bg-slate-100 transition border border-slate-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+                        </div>
+                    </div>
+                </section>
+                <section id="action-log" class="mt-8">
+                    <h2 class="text-2xl font-bold mb-4">Action Log</h2>
+                    <div id="log-container" class="bg-white rounded-lg shadow-sm p-4 h-64 overflow-y-auto border border-slate-200"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detailed Phone View/Edit Modal -->
+    <div id="phone-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-full overflow-y-auto">
+            <div class="p-6 border-b border-slate-200"><h2 id="modal-title" class="text-2xl font-bold">Add New Phone</h2></div>
+            <div class="p-6">
+                <div class="border-b border-slate-200 mb-4">
+                    <nav class="flex space-x-4" id="modal-tabs">
+                        <button data-tab="details" class="tab-btn py-2 px-4 border-b-2 font-medium text-sm active">Details</button>
+                        <button data-tab="listings" class="tab-btn py-2 px-4 border-b-2 font-medium text-sm">Listings</button>
+                        <button data-tab="pricing" class="tab-btn py-2 px-4 border-b-2 font-medium text-sm">Pricing Overrides</button>
+                        <button data-tab="tags" class="tab-btn py-2 px-4 border-b-2 font-medium text-sm">Tags</button>
+                    </nav>
+                </div>
+                <form id="phone-form">
+                    <input type="hidden" id="phone-id">
+                    <div id="tab-details" class="tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><input type="text" id="model_name" placeholder="Model Name" class="p-2 border rounded-md border-slate-300" required><input type="text" id="brand" placeholder="Brand" class="p-2 border rounded-md border-slate-300" required></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <select id="condition" class="p-2 border rounded-md border-slate-300" required>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Usable">Usable</option>
+                                <option value="Scrap">Scrap</option>
+                            </select>
+                            <input type="number" id="stock_quantity" placeholder="Stock Quantity" class="p-2 border rounded-md border-slate-300" required min="0">
+                        </div>
+                        <div class="mb-4"><input type="number" id="base_price" placeholder="Base Price" class="p-2 border rounded-md w-full border-slate-300" required min="0" step="0.01"></div>
+                        <div class="mb-6"><h3 class="font-semibold mb-2">Specifications</h3><div id="specifications-container" class="space-y-2"></div><button type="button" id="add-spec-btn" class="mt-2 text-sm text-indigo-600 hover:underline">Add Specification</button></div>
+                    </div>
+                    <div id="tab-listings" class="tab-content">
+                        <p class="text-sm text-slate-600 mb-4">Manage which platforms this phone is listed on. The backend will run checks before listing.</p>
+                        <div id="listings-container" class="space-y-2"></div>
+                    </div>
+                    <div id="tab-pricing" class="tab-content">
+                        <p class="text-sm text-slate-600 mb-4">Set a manual price to override the automatic calculation. Leave blank to use automatic pricing.</p>
+                        <div class="space-y-3">
+                            <div><label class="font-medium flex justify-between"><span>Platform X Price</span><span class="font-normal text-slate-500">Fee: 10%</span></label><div class="flex items-center"><span class="mr-2 text-slate-500" id="auto-price-x"></span><input type="number" id="override-price-x" placeholder="Manual Price" class="p-2 border rounded-md w-full border-slate-300" min="0" step="0.01"></div></div>
+                            <div><label class="font-medium flex justify-between"><span>Platform Y Price</span><span class="font-normal text-slate-500">Fee: 8% + $2.00</span></label><div class="flex items-center"><span class="mr-2 text-slate-500" id="auto-price-y"></span><input type="number" id="override-price-y" placeholder="Manual Price" class="p-2 border rounded-md w-full border-slate-300" min="0" step="0.01"></div></div>
+                            <div><label class="font-medium flex justify-between"><span>Platform Z Price</span><span class="font-normal text-slate-500">Fee: 12%</span></label><div class="flex items-center"><span class="mr-2 text-slate-500" id="auto-price-z"></span><input type="number" id="override-price-z" placeholder="Manual Price" class="p-2 border rounded-md w-full border-slate-300" min="0" step="0.01"></div></div>
+                        </div>
+                    </div>
+                    <div id="tab-tags" class="tab-content">
+                         <p class="text-sm text-slate-600 mb-4">Add or remove tags. Press Enter to add a new tag.</p>
+                         <div id="tags-container" class="flex flex-wrap gap-2 p-2 border rounded-md border-slate-300"></div>
+                         <input type="text" id="tag-input" placeholder="Add a tag..." class="mt-2 p-2 border rounded-md w-full border-slate-300">
+                    </div>
+                </form>
+            </div>
+            <div class="p-6 bg-slate-50 flex justify-end space-x-4">
+                <button type="button" id="cancel-btn" class="bg-white text-slate-700 px-4 py-2 rounded-md hover:bg-slate-100 transition border border-slate-300 font-medium">Cancel</button>
+                <button type="button" id="save-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition font-medium">Save Phone</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
+            <h2 id="confirmation-title" class="text-lg font-bold mb-4">Are you sure?</h2>
+            <p id="confirmation-message" class="text-slate-600 mb-6">This action cannot be undone.</p>
+            <div class="flex justify-end space-x-4">
+                <button id="confirmation-cancel-btn" class="bg-white text-slate-700 px-4 py-2 rounded-md hover:bg-slate-100 transition border border-slate-300 font-medium">Cancel</button>
+                <button id="confirmation-confirm-btn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition font-medium">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>

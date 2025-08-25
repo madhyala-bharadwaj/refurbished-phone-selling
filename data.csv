@@ -1,0 +1,31 @@
+model_name,brand,condition,specifications,stock_quantity,base_price
+iPhone 15 Pro,Apple,Excellent,"{""storage"":""256GB"", ""color"":""Natural Titanium""}",25,1099.99
+iPhone 15,Apple,Excellent,"{""storage"":""128GB"", ""color"":""Blue""}",30,799.00
+iPhone 14 Pro,Apple,Excellent,"{""storage"":""256GB"", ""color"":""Space Black""}",18,899.50
+iPhone 13,Apple,Good,"{""storage"":""128GB"", ""color"":""Starlight""}",40,599.00
+iPhone SE,Apple,Good,"{""storage"":""64GB"", ""color"":""Red""}",22,249.99
+iPhone 12,Apple,Scrap,"{""storage"":""64GB"", ""color"":""Purple""}",5,150.00
+Galaxy S24 Ultra,Samsung,Excellent,"{""storage"":""512GB"", ""color"":""Titanium Gray""}",20,1299.00
+Galaxy S24,Samsung,Excellent,"{""storage"":""256GB"", ""color"":""Onyx Black""}",28,799.99
+Galaxy S23,Samsung,Excellent,"{""storage"":""256GB"", ""color"":""Cream""}",35,649.50
+Galaxy Z Fold 5,Samsung,Excellent,"{""storage"":""512GB"", ""color"":""Icy Blue""}",10,1399.00
+Galaxy A54,Samsung,Good,"{""storage"":""128GB"", ""color"":""Awesome Violet""}",50,349.00
+Galaxy S21,Samsung,Usable,"{""storage"":""128GB"", ""color"":""Phantom Gray""}",12,250.00
+Pixel 8 Pro,Google,Excellent,"{""storage"":""256GB"", ""color"":""Porcelain""}",15,999.00
+Pixel 8,Google,Excellent,"{""storage"":""128GB"", ""color"":""Obsidian""}",25,699.00
+Pixel 7a,Google,Excellent,"{""storage"":""128GB"", ""color"":""Charcoal""}",30,399.00
+Pixel 6,Google,Good,"{""storage"":""128GB"", ""color"":""Sorta Seafoam""}",18,299.50
+OnePlus 12,OnePlus,Excellent,"{""storage"":""512GB"", ""color"":""Emerald Green""}",14,899.00
+OnePlus 11,OnePlus,Excellent,"{""storage"":""256GB"", ""color"":""Titan Black""}",20,549.00
+Xperia 1 V,Sony,Excellent,"{""storage"":""256GB"", ""color"":""Khaki Green""}",8,1399.99
+Moto G Power,Motorola,Good,"{""storage"":""64GB"", ""color"":""Flash Gray""}",60,199.00
+Razr+,Motorola,Excellent,"{""storage"":""256GB"", ""color"":""Viva Magenta""}",11,699.00
+Redmi Note 12,Xiaomi,Good,"{""storage"":""128GB"", ""color"":""Onyx Gray""}",70,229.00
+Xiaomi 13 Pro,Xiaomi,Excellent,"{""storage"":""256GB"", ""color"":""Ceramic White""}",16,999.00
+Nothing Phone (2),Nothing,Excellent,"{""storage"":""256GB"", ""color"":""Dark Gray""}",19,599.00
+ROG Phone 7,Asus,Excellent,"{""storage"":""512GB"", ""color"":""Phantom Black""}",9,1099.00
+ZenFone 10,Asus,Excellent,"{""storage"":""256GB"", ""color"":""Midnight Black""}",13,749.00
+Surface Duo 2,Microsoft,Good,"{""storage"":""256GB"", ""color"":""Glacier""}",7,899.00
+Find N3 Flip,Oppo,Excellent,"{""storage"":""256GB"", ""color"":""Cream Gold""}",10,949.00
+P60 Pro,Huawei,Good,"{""storage"":""256GB"", ""color"":""Rococo Pearl""}",6,1199.00
+Magic5 Pro,Honor,Excellent,"{""storage"":""512GB"", ""color"":""Black""}",12,1099.00
